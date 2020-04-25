@@ -4,28 +4,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL Shorten</title>
+    <style>
+        @font-face {
+            font-family: 'Product Sans';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/productsans/v5/HYvgU2fE2nRJvZ5JFAumwegdm0LZdjqr5-oayXSOefg.woff2) format('woff2');
+        }
+
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+            font-family: 'Product Sans', sans-serif;
+        }
+
+        .head {
+            text-align: center;
+            padding: 20px;
+            background-color: #eee;
+            border-bottom: 1px solid #aaa;
+            color: #222;
+        }
+
+        .box {
+            margin: 32px auto;
+            width: 50%;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 32px;
+            text-align: center;
+            transition: 0.15s;
+        }
+
+        .box:hover, .box:active {
+            box-shadow: 0px 4px 4px 1px rgba(0,0,0,0.2);
+        }
+        
+        .box .box-form {
+            margin: 16px;
+        }
+
+        .box-form p {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .box-form input[type="url"] {
+            font-size: 16px;
+            margin-bottom: 16px;
+            padding: 8px;
+            border-radius: 6px;
+            border-width: 1px;
+            outline: none;
+        }
+
+        .btn {
+            padding: 4px 10px;
+            border-radius: 4px;
+            background-color: aquamarine;
+            font-size: 18px;
+        }
+
+        .block-center {
+            display: block;
+            margin: auto;
+            text-align: center;
+        }
+        #output {
+            visibility: hidden;
+        }
+    </style>
 </head>
 <body>
-    <h1>Shoretn your URLs</h1>
-    <br><br>
-    <div>
-        <div><label>URL to shorten: </label><input type="url" id="url"></div>
-        <button id="shortenButton">Shorten</button>
+    <h1 class="head">Shorten your URLs</h1>
+    <div class="box">
+        <div class="box-form">
+            <p>URL to shorten</p>
+            <input type="url" id="url">
+        </div>
+        <button id="shortenButton" class="btn block-center">Shorten</button>
     </div>
-    <div id="output"></div>
+    <div class="box block-center" id="output"></div>
     <script>
+        var urlInput = document.getElementById('url');
+        urlInput.focus();
         var shortenButton = document.getElementById('shortenButton');
         var outputDiv = document.getElementById('output');
         shortenButton.addEventListener('click',()=>{
-            var urlInput = document.getElementById('url').value;
-
-            console.log(urlInput);
-    
-            fetch('/shorten?url='+encodeURIComponent(urlInput))
-            .then(r=>r.text())
-            .then(res=>{
-                outputDiv.innerHTML = "<h3> Shortened URL </h3>" + res;
-            })
+            var urlInputValue = urlInput.value;
+            if(urlInputValue){
+                fetch('/shorten?url='+encodeURIComponent(urlInputValue))
+                .then(r=>r.text())
+                .then(res=>{
+                    outputDiv.style.visibility = 'unset';
+                    if (res=='Invalid Url') outputDiv.innerHTML = `<h2> Result </h2><br> ${res}`;
+                    else outputDiv.innerHTML = `<h2> Result </h2><br> <a href="${res}">${res}</a>`;
+                });
+            }
+            else {
+                alert('Value cannot be empty');
+            }
+        });
+        urlInput.addEventListener("keyup", function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                shortenButton.click();
+            }
         });
     </script>
 </body>

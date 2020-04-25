@@ -21,7 +21,7 @@ app.get('/shorten',(req,res)=>{
         else {
             if(data && data.shortened){
                 console.log(req.hostname);
-                res.send(`<a href="${req.headers.host}/${data.shortened}">${req.headers.host}/${data.shortened}</a>`);
+                res.send(`${req.headers.host}/${data.shortened}`);
             }
             else {
                 var shortened = shortenLogic(req.query.url);
@@ -31,7 +31,7 @@ app.get('/shorten',(req,res)=>{
                         url: shortened.url
                     },(e,d)=>{
                         if(e) throw e;
-                        else res.send(`<a href="${req.headers.host}/${d.shortened}">${req.headers.host}/${d.shortened}</a>`);
+                        else res.send(`${req.headers.host}/${d.shortened}`);
                     });
                 }
                 else res.send('Invalid Url');
